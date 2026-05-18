@@ -1,37 +1,37 @@
-project_id = "YOUR_PROJECT_ID"
+project_id = "bluet-terra"
 region     = "asia-south1"
 
 vms = {
-  api = {
-    name         = "dev-api"
-    machine_type = "e2-medium"
+  test1 = {
+    name         = "test1"
+    machine_type = "e2-micro"
     zone         = "asia-south1-a"
     image        = "debian-cloud/debian-12"
     network      = "dev-vpc"
     subnetwork   = "dev-subnet"
-    disk_size    = 30
-    tags         = ["api"]
+    disk_size    = 10
+    tags         = ["test"]
   }
 
-  kafka = {
-    name         = "dev-kafka"
-    machine_type = "e2-standard-2"
+  test2 = {
+    name         = "test2"
+    machine_type = "e2-micro"
     zone         = "asia-south1-a"
     image        = "debian-cloud/debian-12"
     network      = "dev-vpc"
     subnetwork   = "dev-subnet"
-    disk_size    = 100
-    tags         = ["kafka"]
+    disk_size    = 10
+    tags         = ["test"]
   }
 
-  clickhouse = {
-    name         = "dev-clickhouse"
-    machine_type = "e2-standard-4"
+  test3 = {
+    name         = "test3"
+    machine_type = "e2-micro"
     zone         = "asia-south1-a"
     image        = "debian-cloud/debian-12"
     network      = "dev-vpc"
     subnetwork   = "dev-subnet"
-    disk_size    = 200
-    tags         = ["clickhouse"]
+    disk_size    = 10
+    tags         = ["test"]
   }
 }
