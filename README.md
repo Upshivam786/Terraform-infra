@@ -1,56 +1,45 @@
-# Terraform Infrastructure Repository
+# Terraform Infrastructure on Google Cloud
 
-Enterprise-grade Terraform repository for managing scalable cloud infrastructure on GCP.
+Production-style modular Terraform infrastructure on Google Cloud Platform (GCP).
 
-This repository follows a modular architecture with isolated environments and reusable infrastructure modules.
+This repository demonstrates a scalable DevOps/SRE architecture using reusable Terraform modules and environment-based deployments.
 
 ---
 
+
 # Repository Architecture
 
-```text
+
+```
 terraform-infra/
+├── environments/
+│ ├── dev/
+│ │ ├── compute/
+│ │ ├── firewall/
+│ │ ├── iam/
+│ │ ├── image/
+│ │ ├── instance-group/
+│ │ ├── instance-template/
+│ │ ├── load-balancer/
+│ │ ├── network/
+│ │ └── secrets/
+│ ├── prod/
+│ └── stage/
 │
 ├── modules/
-│   ├── vm/
-│   ├── vpc/
-│   ├── iam/
-│   ├── firewall/
-│   ├── kafka/
-│   ├── clickhouse/
-│   ├── postgres/
-│   ├── monitoring/
-│   └── storage/
-│
-├── environments/
-│   ├── dev/
-│   │   ├── network/
-│   │   ├── compute/
-│   │   ├── kafka/
-│   │   ├── clickhouse/
-│   │   ├── postgres/
-│   │   └── monitoring/
-│   │
-│   ├── stage/
-│   │   ├── network/
-│   │   ├── compute/
-│   │   ├── kafka/
-│   │   └── postgres/
-│   │
-│   └── prod/
-│       ├── network/
-│       ├── compute/
-│       ├── kafka/
-│       ├── clickhouse/
-│       ├── postgres/
-│       └── monitoring/
+│ ├── firewall/
+│ ├── iam/
+│ ├── image/
+│ ├── instance_group/
+│ ├── instance_template/
+│ ├── load_balancer/
+│ ├── secret_manager/
+│ ├── vm/
+│ └── vpc/
 │
 ├── shared/
-│   ├── versions.tf
-│   ├── providers.tf
-│   └── locals.tf
+│ └── versions.tf
 │
-├── .gitignore
 └── README.md
 ```
 
@@ -71,227 +60,203 @@ This repository is designed using:
 
 # Core Concepts
 
-## Modules
-
-`modules/` contains reusable infrastructure templates.
-
-Examples:
-
-- VM creation
-- VPC creation
-- IAM configuration
-- Firewall rules
-- Kafka infrastructure
-- ClickHouse infrastructure
-
-These modules are reusable across all environments.
-
 ---
 
-## Environments
+# Infrastructure Workflow
 
-`environments/` contains actual deployments.
+## 1. Network Creation
 
-Examples:
+Terraform creates:
 
-- dev
-- stage
-- prod
-
-Each environment is isolated and independently manageable.
-
----
-
-# Environment Structure
-
-Each environment contains independent infrastructure components.
-
-Example:
-
-```text
-dev/
- ├── network
- ├── compute
- ├── kafka
- ├── clickhouse
- └── postgres
-```
-
-This allows isolated execution.
-
-Example:
-
-```bash
-cd environments/dev/network
-terraform apply
-```
-
-Only the network infrastructure is deployed.
-
----
-
-# Terraform Workflow
-
-Terraform works using:
-
-```text
-Desired State vs Current State
-```
-
-Infrastructure is declared as code.
-
-Terraform automatically:
-
-- creates resources
-- updates resources
-- destroys removed resources
-
----
-
-# Deployment Workflow
-
-## Deploy Network
-
-```bash
-cd environments/dev/network
-terraform init
-terraform plan
-terraform apply
-```
-
----
-
-## Deploy Compute Infrastructure
-
-```bash
-cd environments/dev/compute
-terraform init
-terraform plan
-terraform apply
-```
-
----
-
-## Deploy Kafka Infrastructure
-
-```bash
-cd environments/dev/kafka
-terraform apply
-```
-
----
-
-# Multi-VM Architecture
-
-VMs are dynamically created using:
-
-```hcl
-for_each
-```
-
-Example:
-
-```hcl
-vms = {
-  api = {}
-  kafka = {}
-  clickhouse = {}
-}
-```
-
-Terraform automatically creates multiple VMs.
-
----
-
-# Current Planned Infrastructure
-
-This repository is designed to manage:
-
-- VPCs
-- Subnets
+- VPC
+- Subnet
 - Firewall Rules
-- VM Instances
-- IAM Roles
-- Kafka Infrastructure
-- ClickHouse Infrastructure
-- PostgreSQL Infrastructure
-- Monitoring Stack
-- Storage Buckets
-- CI/CD Infrastructure
 
 ---
 
-# Remote State Architecture
+## 2. VM Deployment
 
-Terraform state will be stored remotely using:
+Terraform provisions VMs using reusable VM modules.
 
-- Google Cloud Storage (GCS)
+Startup scripts automatically:
+
+- Install Apache
+- Configure web server
+- Deploy sample application
+
+---
+
+## 3. Golden Image Creation
+
+Configured VM is converted into a reusable custom image.
+
+This image becomes the base for scalable infrastructure.
+
+---
+
+## 4. Instance Template
+
+Terraform creates an Instance Template using the custom image.
+
+Template defines:
+
+- Machine type
+- Boot disk
+- Network settings
+- Tags
+
+---
+
+## 5. Managed Instance Group (MIG)
+
+Terraform creates a regional Managed Instance Group.
+
+Features:
+
+- Auto healing
+- Auto recreation
+- Scalable instances
+- Multi-zone deployment
+
+---
+
+## 6. HTTP Load Balancer
+
+Terraform provisions:
+
+- Health checks
+- Backend service
+- URL map
+- HTTP proxy
+- Global forwarding rule
+
+Traffic flow:
+
+nternet
+↓
+Load Balancer
+↓
+MIG
+↓
+VM Instances
+
+
+---
+
+# Remote Terraform State
+
+Terraform state is stored remotely in Google Cloud Storage (GCS).
 
 Benefits:
 
 - Team collaboration
 - State locking
-- Backup and recovery
-- CI/CD compatibility
-- Safe production deployments
+- Centralized infrastructure state
+- Safer deployments
+- CI/CD friendly architecture
+
+Example:
+
+gs://shivam-terraform-state/dev/network
+
 
 ---
 
-# Security Best Practices
+# Secret Management
 
-This repository follows:
+Secrets are managed using Google Cloud Secret Manager.
 
-- Least privilege IAM
-- Remote state storage
-- No secrets in Git
-- Environment isolation
-- Modular deployments
-- Infrastructure versioning
+Examples:
 
----
+- Database passwords
+- JWT secrets
+- MongoDB URI
+- API keys
 
-# Git Ignore Rules
+Benefits:
 
-The following files are intentionally ignored:
-
-```text
-.terraform/
-*.tfstate
-*.tfstate.*
-.terraform.lock.hcl
-```
-
-These files should never be committed.
+- Secure secret storage
+- IAM controlled access
+- Avoid hardcoded secrets
+- Production-ready security
 
 ---
 
-# Future Enhancements
+# Example Deployment Commands
 
-Planned future integrations:
+## Network
 
-- Terragrunt
-- GitHub Actions CI/CD
-- Secret Manager
-- Auto Scaling
-- Monitoring & Alerting
-- Kubernetes / GKE
-- Disaster Recovery
-- Multi-region deployment
+```bash
+cd environments/dev/network
 
----
+terraform init
+terraform plan
+terraform apply
 
-# Repository Goal
 
-The goal of this repository is to provide:
+## Compute
 
-- scalable infrastructure automation
-- reusable Terraform modules
-- enterprise-grade infrastructure management
-- production-safe deployments
-- analytics platform automation
+cd environments/dev/compute
 
----
+terraform init
+terraform plan
+terraform apply
 
-# Author
 
-Maintained by Shivam Upadhyay.
+
+## Load Balancer
+cd environments/dev/load-balancer
+
+terraform init
+terraform plan
+terraform apply
+
+
+
+## Current Stack
+
+Infrastructure currently tested on:
+
+Google Cloud Platform (GCP)
+Terraform
+Google Compute Engine
+Google Cloud Storage
+Google Secret Manager
+Apache HTTP Server
+
+
+
+## Future Improvements
+
+Planned enhancements:
+
+HTTPS Load Balancer
+SSL certificates
+Cloud DNS
+Auto Scaling Policies
+CI/CD integration
+GitHub Actions
+Monitoring & Logging
+Bastion Host
+Private Subnets
+Cloud NAT
+Kubernetes (GKE)
+Packer image automation
+Learning Outcomes
+
+This project demonstrates:
+
+Infrastructure as Code (IaC)
+Terraform module design
+Cloud networking
+Scalable infrastructure
+Immutable infrastructure
+Production-grade deployment flow
+DevOps best practices
+
+
+
+
+## Author
+
+Shivam Upadhyay

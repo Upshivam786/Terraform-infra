@@ -11,4 +11,5 @@ module "vms" {
   subnetwork   = each.value.subnetwork
   disk_size    = each.value.disk_size
   tags         = each.value.tags
+  startup_script = each.value.startup_script
 }

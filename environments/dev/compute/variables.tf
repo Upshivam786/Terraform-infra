@@ -11,5 +11,6 @@ variable "vms" {
     subnetwork   = string
     disk_size    = number
     tags         = list(string)
+    startup_script = string
   }))
 }
