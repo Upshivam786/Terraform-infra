@@ -16,3 +16,5 @@ crash.log
 
 # VS Code
 .vscode/
+*.json
+api-sa-key.json

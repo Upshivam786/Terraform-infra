@@ -1,5 +1,8 @@
-project_id = "bluet-terra"
-region     = "asia-south1"
+project_id            = "bluet-terra"
+region                = "asia-south1"
+service_account_email = "api-service-account@bluet-terra.iam.gserviceaccount.com"
+ssh_user              = "shivam_u"
+ssh_public_key        = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINIcs5SheKl6R9oN0W8X+HMmIGwlFVrYgID8YUk99Bma bitbucket-deploy"
 
 vms = {
   test1 = {
@@ -11,55 +14,13 @@ vms = {
     subnetwork   = "dev-subnet"
     disk_size    = 10
     tags         = ["http-server"]
-
     startup_script = <<-EOT
       #!/bin/bash
-      apt update
-      apt install apache2 -y
-
-      echo "<h1>Hello from Terraform VM</h1>" > /var/www/html/index.html
-
-      systemctl enable apache2
-      systemctl restart apache2
+      apt-get update -y
+      apt-get install -y docker.io google-cloud-sdk
+      systemctl enable docker
+      systemctl start docker
+      gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
     EOT
   }
 }
-
-
-# project_id = "bluet-terra"
-# region     = "asia-south1"
-
-# vms = {
-#   test1 = {
-#     name         = "test1"
-#     machine_type = "e2-micro"
-#     zone         = "asia-south1-a"
-#     image        = "debian-cloud/debian-12" # Use the correct image family or specify the image name
-#     network      = "dev-vpc"
-#     subnetwork   = "dev-subnet"
-#     disk_size    = 10
-#     tags         = ["test"]
-#   }
-
-#   test2 = {
-#     name         = "test2"
-#     machine_type = "e2-micro"
-#     zone         = "asia-south1-a"
-#     image        = "debian-cloud/debian-12"
-#     network      = "dev-vpc"
-#     subnetwork   = "dev-subnet"
-#     disk_size    = 10
-#     tags         = ["test"]
-#   }
-
-#   test3 = {
-#     name         = "test3"
-#     machine_type = "e2-micro"
-#     zone         = "asia-south1-a"
-#     image        = "debian-cloud/debian-12"
-#     network      = "dev-vpc"
-#     subnetwork   = "dev-subnet"
-#     disk_size    = 10
-#     tags         = ["test"]
-#   }
-# }
