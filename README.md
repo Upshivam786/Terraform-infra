@@ -1,3 +1,7 @@
+## End-to-End Deployment Flow
+
+![Deployment](docs/images/architecture.png)
+
 # terraform-infra
 
 Production-style GCP infrastructure built with Terraform — modular, environment-isolated, and scalable.
