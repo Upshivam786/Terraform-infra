@@ -1,6 +1,6 @@
 ## End-to-End Deployment Flow
 
-![Deployment](docs/images/architecture.png)
+![Alt Text](architecture.png)
 
 # terraform-infra
 
