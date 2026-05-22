@@ -11,12 +11,11 @@ resource "google_compute_backend_service" "backend" {
   protocol    = "HTTP"
   timeout_sec = 10
 
-  health_checks = [
-    google_compute_health_check.http.id
-  ]
+  health_checks = [google_compute_health_check.http.id]
 
   backend {
-    group = var.instance_group
+    group          = var.instance_group
+    balancing_mode = "UTILIZATION"
   }
 }
 
